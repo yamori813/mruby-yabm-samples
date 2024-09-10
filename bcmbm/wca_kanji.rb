@@ -1,6 +1,6 @@
 # control code
-ASCIIMODE = "\x00"
-KANJIMODE = "\x01"
+ASCIIMODE = "\x01"
+KANJIMODE = "\x02"
 CLEAR = "\x0c"
 LF = "\x0d"
 BACK = "\x08"
