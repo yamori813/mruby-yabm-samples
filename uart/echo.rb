@@ -3,21 +3,18 @@
 #
 
 begin
+  yabm = YABM.new
 
-yabm = YABM.new
+  # yabm.setbaud(9600, 0)
 
-#yabm.setbaud(9600, 0)
+  yabm.print "UART echo back test\r\n"
 
-yabm.print "UART echo back test\r\n"
-
-loop do
-   if yabm.havech(0)
-     c = yabm.getch(0)
-     yabm.print c.chr
-   end
-end
-
-rescue => e
+  loop do
+    if yabm.havech(0)
+      c = yabm.getch(0)
+      yabm.print c.chr
+    end
+  end
+rescue StandardError => e
   yabm.print e.to_s
 end
-
