@@ -309,7 +309,7 @@ loop do
     para = para + "&field4=" + pointstr(lx, 2)
 #    res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?" + para, {'User-Agent' => "test-agent"})
     res = SimpleHttp.new("http", oumon, 80).request("GET", "/cgi/wsupdate.cgi?" + para, {'User-Agent' => "test-agent"})
-    yabm.print  res.status.to_s + "\r\n"
+#    yabm.print  res.status.to_s + "\r\n"
     count = 0
     tsum = 0
     hsum = 0
