@@ -4,7 +4,7 @@
 #
 
 def gpioinit yabm
-  yabm.gpiosetdat(1 << 6)
+  yabm.gpiosetdat((1 << 6) | (1 << 7))
 end
 
 def ledon yabm
