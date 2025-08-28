@@ -6,8 +6,8 @@
 
 # GPIO I2C Pin used SW3
 
-SCL = 3
-SDA = 5
+SCL = 5
+SDA = 3
 
 LED10 = (1 << 6) # green
 LED2 = (1 << 2)
