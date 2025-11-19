@@ -27,7 +27,7 @@ class ENS160
   end
 
   def setTempRh(t, r)
-    val = (((t * 100) + 27_315) * 64) / 100
+    val = ((((t * 1000) + 273150) * 64) + 500) / 1000
     @y.i2cwrite(ENS160ADDR, [TEMP_IN, val & 0xff, val >> 8])
     @y.i2cwrite(ENS160ADDR,  [RH_IN,  val & 0xff, val >> 8])
   end
