@@ -2,7 +2,7 @@
 # bcmbm-mruby mruby script
 #
 # Weather Station used by MPL115A2, SHT30, BH1750 on WCA-G
-#
+# use i2c/bh1750_c.rb i2c/mpl115_c.rb i2c/sht3x_c.rb 
 
 # GPIO I2C Pin used SW3
 
@@ -46,12 +46,6 @@ dns = "10.10.10.18"
 oumon = "10.10.10.18"
 
 yabm.netstart(addr, mask, gw, dns)
-
-yabm.print yabm.getaddress + "\r\n"
-
-# sync date by ntp use https X.509
-#ntpaddr = yabm.lookup("ntp.nict.jp")
-#yabm.sntp(ntpaddr)
 
 yabm.i2cinit(SCL, SDA, 1)
 
@@ -135,9 +129,7 @@ loop do
     para = para + "&field2=" + pointstr(h, 2)
     para = para + "&field3=" + pointstr(p, 2)
     para = para + "&field4=" + pointstr(lx, 2)
-#    res = SimpleHttp.new("https", "api.thingspeak.com", 443).request("GET", "/update?" + para, {'User-Agent' => "test-agent"})
     res = SimpleHttp.new("http", oumon, 80).request("GET", "/cgi/wsupdate.cgi?" + para, {'User-Agent' => "test-agent"})
-#    yabm.print  res.status.to_s + "\r\n"
     count = 0
     tsum = 0
     hsum = 0
