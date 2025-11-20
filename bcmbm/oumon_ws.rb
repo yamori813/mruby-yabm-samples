@@ -18,7 +18,6 @@ LED11 = (1 << 7) # red
 
 MPLADDR = 0x60
 SHTADDR = 0x44
-BHADDR = 0x23
 
 # utility function
 
@@ -35,65 +34,6 @@ def pointstr(p, c)
 end
 
 # senser class
-
-class BH1750
-  @mtreg = 69
-
-  # Measurement at 1 lux resolution. Measurement time is approx 120ms.
-  CONTINUOUS_HIGH_RES_MODE  = 0x10
-  # Measurement at 0.5 lux resolution. Measurement time is approx 120ms.
-  CONTINUOUS_HIGH_RES_MODE_2 = 0x11
-  # Measurement at 4 lux resolution. Measurement time is approx 16ms.
-  CONTINUOUS_LOW_RES_MODE = 0x13
-  # Measurement at 1 lux resolution. Measurement time is approx 120ms.
-  ONE_TIME_HIGH_RES_MODE = 0x20
-  # Measurement at 0.5 lux resolution. Measurement time is approx 120ms.
-  ONE_TIME_HIGH_RES_MODE_2 = 0x21
-  # Measurement at 4 lux resolution. Measurement time is approx 16ms.
-  ONE_TIME_LOW_RES_MODE = 0x23
-
-  def init yabm, addr
-    @y = yabm
-    @addr = addr
-  end
-
-  def setMTreg mtreg
-    @mtreg = mtreg
-    @y.i2cwrite(@addr, [0x40 | (@mtreg >> 5)])
-    @y.msleep(200)
-    @y.i2cwrite(@addr, [0x60 | (@mtreg & 0x1f)])
-    @y.msleep(200)
-  end
-
-  def setMeasurement mode
-    @meas = mode
-    if @meas == CONTINUOUS_HIGH_RES_MODE ||
-      @meas == CONTINUOUS_HIGH_RES_MODE_2 ||
-      @meas == CONTINUOUS_LOW_RES_MODE then
-      @y.i2cwrite(@addr, [@meas])
-    end
-  end
-
-  def getLightLevel
-    if @meas == ONE_TIME_HIGH_RES_MODE ||
-      @meas == ONE_TIME_HIGH_RES_MODE_2 then
-      @y.i2cwrite(@addr, [@meas])
-      @y.msleep(120 * @mtreg / 69)
-    elsif @meas == ONE_TIME_LOW_RES_MODE then
-      @y.i2cwrite(@addr, [@meas])
-      @y.msleep(16 * @mtreg / 69)
-    end
-    bharr = @y.i2cread(@addr, 2)
-    val = (bharr[0] << 8) | bharr[1]
-    if @meas == CONTINUOUS_HIGH_RES_MODE_2 ||
-      @meas == ONE_TIME_HIGH_RES_MODE_2 then
-      lx = val * 50 * 69 * 5 / (6 * @mtreg)
-    else
-      lx = val * 100 * 69 * 5 / (6 * @mtreg)
-    end
-    return lx
-  end
-end
 
 class SHT3x
   def init yabm
@@ -230,8 +170,7 @@ sht.init yabm
 mpl = MPL115.new
 mpl.init yabm
 
-bh = BH1750.new
-bh.init(yabm, BHADDR)
+bh = BH1750.new yabm
 
 bh.setMTreg(254)
 bh.setMeasurement(BH1750::ONE_TIME_HIGH_RES_MODE_2)
