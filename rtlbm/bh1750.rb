@@ -3,6 +3,7 @@
 #
 # This is demonstration for BH1750
 # Used BBR-4MG V2
+# use i2c/bh1750_c.rb
 
 # i2c pin
 
@@ -10,10 +11,6 @@
 I2CSCK = 3
 # TDI (3) has internal pull-up resistor
 I2CSDA = 5
-
-# i2c BH1750 address
-
-BHADDR = 0x23
 
 def pointstr(p, c)
   if p == 0
@@ -24,64 +21,6 @@ def pointstr(p, c)
     s.insert(-1 - c, '.')
   else
     p.to_s.insert(-1 - c, '.')
-  end
-end
-
-class BH1750
-  @mtreg = 69
-
-  # Measurement at 1 lux resolution. Measurement time is approx 120ms.
-  CONTINUOUS_HIGH_RES_MODE = 0x10
-  # Measurement at 0.5 lux resolution. Measurement time is approx 120ms.
-  CONTINUOUS_HIGH_RES_MODE_2 = 0x11
-  # Measurement at 4 lux resolution. Measurement time is approx 16ms.
-  CONTINUOUS_LOW_RES_MODE = 0x13
-  # Measurement at 1 lux resolution. Measurement time is approx 120ms.
-  ONE_TIME_HIGH_RES_MODE = 0x20
-  # Measurement at 0.5 lux resolution. Measurement time is approx 120ms.
-  ONE_TIME_HIGH_RES_MODE_2 = 0x21
-  # Measurement at 4 lux resolution. Measurement time is approx 16ms.
-  ONE_TIME_LOW_RES_MODE = 0x23
-
-  def initialize(yabm, addr)
-    @y = yabm
-    @addr = addr
-  end
-
-  def setMTreg(mtreg)
-    @mtreg = mtreg
-    @y.i2cwrite(@addr, [0x40 | (@mtreg >> 5)])
-    @y.msleep(200)
-    @y.i2cwrite(@addr, [0x60 | (@mtreg & 0x1f)])
-    @y.msleep(200)
-  end
-
-  def setMeasurement(mode)
-    @meas = mode
-    if @meas == CONTINUOUS_HIGH_RES_MODE ||
-       @meas == CONTINUOUS_HIGH_RES_MODE_2 ||
-       @meas == CONTINUOUS_LOW_RES_MODE
-      @y.i2cwrite(@addr, [@meas])
-    end
-  end
-
-  def getLightLevel
-    if @meas == ONE_TIME_HIGH_RES_MODE ||
-       @meas == ONE_TIME_HIGH_RES_MODE_2
-      @y.i2cwrite(@addr, [@meas])
-      @y.msleep(120 * @mtreg / 69)
-    elsif @meas == ONE_TIME_LOW_RES_MODE
-      @y.i2cwrite(@addr, [@meas])
-      @y.msleep(16 * @mtreg / 69)
-    end
-    bharr = @y.i2cread(@addr, 2)
-    val = (bharr[0] << 8) | bharr[1]
-    if @meas == CONTINUOUS_HIGH_RES_MODE_2 ||
-       @meas == ONE_TIME_HIGH_RES_MODE_2
-      val * 50 * 69 * 5 / (6 * @mtreg)
-    else
-      val * 100 * 69 * 5 / (6 * @mtreg)
-    end
   end
 end
 
