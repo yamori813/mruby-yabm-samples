@@ -1,7 +1,7 @@
 #
 # rtlbm-mruby mruby script
 #
-# This is demonstration of I2C LCD
+# This is demonstration of I2C LCD on BBR
 #
 
 # i2c pin
