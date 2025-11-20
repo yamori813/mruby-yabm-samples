@@ -19,9 +19,9 @@ class BH1750
   # Measurement at 4 lux resolution. Measurement time is approx 16ms.
   ONE_TIME_LOW_RES_MODE = 0x23
 
-  def initialize(yabm, addr)
+  def initialize(yabm)
     @y = yabm
-    @addr = addr
+    @addr = BHADDR
   end
 
   def setMTreg(mtreg)

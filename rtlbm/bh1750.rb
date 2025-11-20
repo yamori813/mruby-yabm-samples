@@ -35,7 +35,7 @@ begin
 
   yabm.i2cinit(I2CSCK, I2CSDA, 1)
 
-  bh = BH1750.new(yabm, BHADDR)
+  bh = BH1750.new(yabm)
 
   interval = 20
 
