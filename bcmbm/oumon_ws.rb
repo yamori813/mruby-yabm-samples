@@ -14,11 +14,6 @@ LED2 = (1 << 2)
 LED6 = (1 << 1)
 LED11 = (1 << 7) # red
 
-# i2c address
-
-MPLADDR = 0x60
-SHTADDR = 0x44
-
 # utility function
 
 def pointstr(p, c)
@@ -30,110 +25,6 @@ def pointstr(p, c)
     return s.insert(-1 - c, ".")
   else
     return p.to_s.insert(-1 - c, ".")
-  end
-end
-
-# senser class
-
-class SHT3x
-  def init yabm
-    @y = yabm
-  end
-  def chkcrc dat
-    crc8 = 0xff
-    for i in 0..1 do
-      crc8 = crc8 ^ dat[i]
-      8.times {
-        if crc8 & 0x80 == 0x80 then
-          crc8 = crc8 << 1
-          crc8 = crc8 ^ 0x31
-        else
-          crc8 = crc8 << 1
-        end
-      }
-    end
-    if (crc8 & 0xff) == dat[2] then
-      return true
-    else
-      return false
-    end
-  end
-  def getStatus
-    @y.i2cwrite(SHTADDR, 0xf3, 0x2d)
-    @y.msleep(100)
-    arr = @y.i2cread(SHTADDR, 3)
-    return (arr[0] << 8) | arr[1]
-  end
-  def getCelsiusAndHumidity
-    while @y.i2cchk(SHTADDR) == 0 do
-      @y.msleep(1)
-    end
-    @y.i2cwrite(SHTADDR, 0x24, 0x00)
-    @y.msleep(500)
-    while 1 do
-      arr = @y.i2cread(SHTADDR, 6)
-      if arr then
-        break
-      end
-      @y.msleep(1)
-    end
-    t = ((arr[0] << 8) | arr[1]) * 17500 / 65535 - 4500
-    h = ((arr[3] << 8) | arr[4]) * 10000 / 65535
-    return t, h
-  end
-end
-
-class MPL115
-  def init yabm
-    @y = yabm
-    while @y.i2cchk(MPLADDR) == 0 do
-      @y.msleep(1)
-    end
-    @a0 = @y.i2cread(MPLADDR, 1, 0x04) << 8 | @y.i2cread(MPLADDR, 1, 0x05)
-    @b1 = @y.i2cread(MPLADDR, 1, 0x06) << 8 | @y.i2cread(MPLADDR, 1, 0x07)
-    @b2 = @y.i2cread(MPLADDR, 1, 0x08) << 8 | @y.i2cread(MPLADDR, 1, 0x09)
-    @c12 = @y.i2cread(MPLADDR, 1, 0x0a) << 8 | @y.i2cread(MPLADDR, 1, 0x0b)
-  end
-
-# This calculate code is based c source code in NXP AN3785 document
-
-  def calculatePCompShort(padc, tadc, a0, b1, b2, c12)
-    if a0 >= 0x8000 then
-      a0 = a0 - 0x10000
-    end
-    if b1 >= 0x8000 then
-      b1 = b1 - 0x10000
-    end
-    if b2 >= 0x8000 then
-      b2 = b2 - 0x10000
-    end
-    if c12 >= 0x8000 then
-      c12 = c12 - 0x10000
-    end
-    padc = padc >> 6
-    tadc = tadc >> 6
-    c12x2 = (c12 * tadc) >> 11
-    a1 = b1 + c12x2;
-    a1x1 = a1 * padc
-    y1 = (a0 << 10) + a1x1
-    a2x2 = (b2 * tadc) >> 1
-    pcomp = (y1 + a2x2) >> 9
-    return pcomp
-  end
-
-  def readPressure
-    while @y.i2cchk(MPLADDR) == 0 do
-      @y.msleep(1)
-    end
-    @y.i2cwrite(MPLADDR, 0x12, 0x01)
-    @y.msleep(10)
-    padc = @y.i2cread(MPLADDR, 1, 0x00) << 8 | @y.i2cread(MPLADDR, 1, 0x01)
-    tadc = @y.i2cread(MPLADDR, 1, 0x02) << 8 | @y.i2cread(MPLADDR, 1, 0x03)
-
-    pcomp = calculatePCompShort(padc, tadc, @a0, @b1, @b2, @c12)
-    pressure = ((pcomp * 1041) >> 14) + 800
-    frec = ((pressure & 0xf) * 1000) / 16
-    return ((pressure >> 4) * 1000) + frec
   end
 end
 
@@ -164,11 +55,9 @@ yabm.print yabm.getaddress + "\r\n"
 
 yabm.i2cinit(SCL, SDA, 1)
 
-sht = SHT3x.new
-sht.init yabm
+sht = SHT3x.new yabm
 
-mpl = MPL115.new
-mpl.init yabm
+mpl = MPL115.new yabm
 
 bh = BH1750.new yabm
 
