@@ -2,7 +2,7 @@
 # mruby on YABM script
 #
 # Weather Station used by BMP180 and Si7021 on HomeSpotCube
-# need sub_hsc.rb
+# need sub_hsc.rb i2c/bmp180_c.rb i2c/si7021_c.rb
 #
 
 APIKEY = 'naisyo'
