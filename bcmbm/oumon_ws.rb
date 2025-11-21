@@ -55,6 +55,10 @@ mpl = MPL115.new yabm
 
 bh = BH1750.new yabm
 
+aht = AHT21.new yabm
+
+ens = ENS160.new yabm
+
 bh.setMTreg(254)
 bh.setMeasurement(BH1750::ONE_TIME_HIGH_RES_MODE_2)
 
@@ -70,6 +74,9 @@ tsum = 0
 hsum = 0
 psum = 0
 lxsum = 0
+aqimax = 0
+tvocsum = 0
+eco2sum = 0
 
 SimpleHttp.new("http", oumon, 80).request("GET", "/cgi/reboot.cgi", {'User-Agent' => "test-agent"})
 
@@ -117,6 +124,16 @@ loop do
   yabm.print pointstr(lx, 2) + " "
   lxsum = lxsum + lx
 
+  trh = aht.sensorRead
+  ens.setTempRh trh[0], trh[1]
+  gas = ens.getData
+  yabm.print gas[0].to_s + " " + gas[1].to_s + " " + gas[2].to_s + " "
+  if gas[0] > aqimax then
+    aqimax = gas[0]
+  end
+  tvocsum += gas[1]
+  eco2sum += gas[2]
+
   yabm.print error.to_s + "\r\n"
 
   if count == postint - 1 then
@@ -124,17 +141,25 @@ loop do
     h = hsum / postint
     p = psum / postint
     lx = lxsum / postint
+    tv = tvocsum / postint
+    ec = eco2sum / postint
     para = ""
     para = para + "&field1=" + pointstr(t, 2)
     para = para + "&field2=" + pointstr(h, 2)
     para = para + "&field3=" + pointstr(p, 2)
     para = para + "&field4=" + pointstr(lx, 2)
+    para = para + "&field5=" + aqimax.to_s
+    para = para + "&field6=" + tv.to_s
+    para = para + "&field7=" + ec.to_s
     res = SimpleHttp.new("http", oumon, 80).request("GET", "/cgi/wsupdate.cgi?" + para, {'User-Agent' => "test-agent"})
     count = 0
     tsum = 0
     hsum = 0
     psum = 0
     lxsum = 0
+    aqimax = 0
+    tvocsum = 0
+    eco2sum = 0
     reg = yabm.gpiogetdat
     yabm.gpiosetdat(reg | LED11)
   else
