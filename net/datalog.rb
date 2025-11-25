@@ -1,6 +1,6 @@
 #
 # mruby on YABM script
-# use lib/yabmtime.rb, rtlbm/sub_hsc.rb, i2c/bmp160.rb 
+# use lib/yabmtime.rb, rtlbm/sub_hsc.rb, i2c/bmp160_c.rb
 # BMP180 temperature logging script
 #
 
