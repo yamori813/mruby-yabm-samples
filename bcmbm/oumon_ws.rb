@@ -62,8 +62,8 @@ ens = ENS160.new yabm
 bh.setMTreg(254)
 bh.setMeasurement(BH1750::ONE_TIME_HIGH_RES_MODE_2)
 
-measureint = 30
-postint = 10
+measureint = 60
+postint = 5
 count = 0
 
 lastst = 0
