@@ -1,6 +1,6 @@
 #
 # mruby on YABM script
-# use lib/yabmtime.rb, rtlbm/sub_hsc.rb
+# use lib/yabmtime.rb, rtlbm/sub_hsc.rb, i2c/bmp160.rb 
 # BMP180 temperature logging script
 #
 
@@ -8,31 +8,6 @@
 
 SCL = 2
 SDA = 11
-
-BMPADDR = 0x77
-
-PRESSURE_WAIT = [5, 8, 14, 26]
-
-def readup(yabm, oss) 
-  msb = yabm.i2cread(BMPADDR, 1, 0xf6)
-  lsb = yabm.i2cread(BMPADDR, 1, 0xf7)
-  xlsb = yabm.i2cread(BMPADDR, 1, 0xf8)
-  val = ((msb << 16) + (lsb << 8) + xlsb) >> (8 - oss)
-  return val
-end
-
-def readu16(yabm, addr) 
-  val = yabm.i2cread(BMPADDR, 1, addr) << 8 | yabm.i2cread(BMPADDR, 1, addr + 1)
-  return val
-end
-
-def read16(yabm, addr) 
-  val = yabm.i2cread(BMPADDR, 1, addr) << 8 | yabm.i2cread(BMPADDR, 1, addr + 1)
-  if val >= 0x8000 then
-    val = val - 0x10000
-  end
-  return val
-end
 
 begin
 
@@ -65,17 +40,7 @@ gpioinit(yabm)
 
 yabm.i2cinit(SCL, SDA, 1)
 
-ac1 = read16(yabm, 0xaa)
-ac2 = read16(yabm, 0xac)
-ac3 = read16(yabm, 0xae)
-ac4 = readu16(yabm, 0xb0)
-ac5 = readu16(yabm, 0xb2)
-ac6 = readu16(yabm, 0xb4)
-b1 = read16(yabm, 0xb6)
-b2 = read16(yabm, 0xb8)
-mb = read16(yabm, 0xba)
-mc = read16(yabm, 0xbc)
-md = read16(yabm, 0xbe)
+b = BMP180.new yabm, BMP180::OSS_STANDARD
 
 d = YABMTIME.new
 
@@ -117,23 +82,12 @@ loop do
   end
 
   yabm.msleep(1000)
-  yabm.i2cwrite(BMPADDR, 0xf4, 0x2e)
-  yabm.msleep(500)
-  ut = read16(yabm, 0xf6)
-  yabm.print ut.to_s + " "
+  t = b.readTemperature
+  tstr = (t / 10).to_s + "." + (t % 10).to_s
+  sum = sum + t
+  count = count + 1
 
-  if ut != 0
-    x1 = (ut - ac6) * ac5 >> 15
-    x2 = (mc << 11) / (x1 + md)
-    b5 = x1 + x2
-    t = (b5 + 8) >> 4
-
-    tstr = (t / 10).to_s + "." + (t % 10).to_s
-    sum = sum + t
-    count = count + 1
-
-    yabm.print tstr + " "
-  end
+  yabm.print tstr + " "
 
   yabm.msleep 60_000
 end
