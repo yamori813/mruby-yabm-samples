@@ -172,7 +172,6 @@ loop do
   yabm.watchdogreset
 
   yabm.msleep(1000 * MEASINTERVAL)
-  yabm.msleep(1000 * MEASINTERVAL)
 end
 
 rescue => e
