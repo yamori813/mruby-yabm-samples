@@ -14,6 +14,9 @@ LED2 = (1 << 2)
 LED6 = (1 << 1)
 LED11 = (1 << 7) # red
 
+MEASINTERVAL = 30
+MEASCOUNT = 5
+
 # utility function
 
 def pointstr(p, c)
@@ -62,8 +65,6 @@ ens = ENS160.new yabm
 bh.setMTreg(254)
 bh.setMeasurement(BH1750::ONE_TIME_HIGH_RES_MODE_2)
 
-measureint = 60
-postint = 5
 count = 0
 
 lastst = 0
@@ -87,7 +88,7 @@ loop do
   error = 0
 
   reg = yabm.gpiogetdat
-  if count == postint - 1 then
+  if count == MEASCOUNT - 1 then
     yabm.gpiosetdat(reg & ~LED11)
   else
     yabm.gpiosetdat(reg & ~LED10)
@@ -136,7 +137,7 @@ loop do
 
   yabm.print error.to_s + "\r\n"
 
-  if count == postint - 1 then
+  if count == MEASCOUNT - 1 then
     t = tsum / postint
     h = hsum / postint
     p = psum / postint
@@ -170,7 +171,8 @@ loop do
 
   yabm.watchdogreset
 
-  yabm.msleep(1000 * measureint)
+  yabm.msleep(1000 * MEASINTERVAL)
+  yabm.msleep(1000 * MEASINTERVAL)
 end
 
 rescue => e
