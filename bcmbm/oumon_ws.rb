@@ -67,10 +67,6 @@ bh.setMeasurement(BH1750::ONE_TIME_HIGH_RES_MODE_2)
 
 count = 0
 
-lastst = 0
-lastsh = 0
-lastmp = 0
-
 tsum = 0
 hsum = 0
 psum = 0
@@ -85,8 +81,6 @@ yabm.watchdogstart(300)
 
 loop do
 
-  error = 0
-
   reg = yabm.gpiogetdat
   if count == MEASCOUNT - 1 then
     yabm.gpiosetdat(reg & ~LED11)
@@ -95,29 +89,11 @@ loop do
   end
 
   t, h = sht.getCelsiusAndHumidity
-  if count == 0 || (lastst - t).abs < 100 then
-    lastst = t
-  else
-    t = lastst
-    error = error | (1 << 0)
-  end
-  if count == 0 || (lastsh - h).abs < 2000 then
-    lastsh = h
-  else
-    h = lastsh
-    error = error | (1 << 1)
-  end
   yabm.print count.to_s + " " + pointstr(t, 2) + " " + pointstr(h, 2) + " "
   tsum = tsum + t
   hsum = hsum + h
 
   p = mpl.readPressure
-  if count == 0 || (lastmp - p).abs < 1000 then
-    lastmp = p
-  else
-    p = lastmp
-    error = error | (1 << 2)
-  end
   yabm.print pointstr(p, 2) + " "
   psum = psum + p
 
@@ -135,25 +111,26 @@ loop do
   tvocsum += gas[1]
   eco2sum += gas[2]
 
-  yabm.print error.to_s + "\r\n"
+  yabm.print "\r\n"
 
   if count == MEASCOUNT - 1 then
-    t = tsum / postint
-    h = hsum / postint
-    p = psum / postint
-    lx = lxsum / postint
-    tv = tvocsum / postint
-    ec = eco2sum / postint
-    para = ""
-    para = para + "&field1=" + pointstr(t, 2)
-    para = para + "&field2=" + pointstr(h, 2)
-    para = para + "&field3=" + pointstr(p, 2)
-    para = para + "&field4=" + pointstr(lx, 2)
-    para = para + "&field5=" + aqimax.to_s
-    para = para + "&field6=" + tv.to_s
-    para = para + "&field7=" + ec.to_s
+    t = tsum / MEASCOUNT
+    h = hsum / MEASCOUNT
+    p = psum / MEASCOUNT
+    lx = lxsum / MEASCOUNT
+    tv = tvocsum / MEASCOUNT
+    ec = eco2sum / MEASCOUNT
+    para = "&field1=" + pointstr(t, 2)
+    para += "&field2=" + pointstr(h, 2)
+    para += "&field3=" + pointstr(p, 2)
+    para += "&field4=" + pointstr(lx, 2)
+    para += "&field5=" + aqimax.to_s
+    para += "&field6=" + tv.to_s
+    para += "&field7=" + ec.to_s
     res = SimpleHttp.new("http", oumon, 80).request("GET", "/cgi/wsupdate.cgi?" + para, {'User-Agent' => "test-agent"})
+
     count = 0
+
     tsum = 0
     hsum = 0
     psum = 0
@@ -161,6 +138,7 @@ loop do
     aqimax = 0
     tvocsum = 0
     eco2sum = 0
+
     reg = yabm.gpiogetdat
     yabm.gpiosetdat(reg | LED11)
   else
