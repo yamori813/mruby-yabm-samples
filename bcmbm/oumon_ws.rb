@@ -14,8 +14,8 @@ LED2 = (1 << 2)
 LED6 = (1 << 1)
 LED11 = (1 << 7) # red
 
-MEASINTERVAL = 30
-MEASCOUNT = 5
+MEASINTERVAL = 60
+MEASCOUNT = 3
 
 # utility function
 
