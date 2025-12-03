@@ -6,7 +6,7 @@ begin
 
 # ip address setting
 
-addr = "10.0.1.123"
+addr = "10.0.1.111"
 mask = "255.255.255.0"
 gw = "10.0.1.1"
 dns = "10.0.1.1"
@@ -27,6 +27,11 @@ res = http_hdr1 + html_bdy.length.to_s + http_hdr2 + html_bdy
 yabm.httpsvrsetres(res, res.length)
 
 loop do
+
+  val = yabm.httpsvrgetreq
+  if val
+    yabm.print val
+  end
 
 end
 
