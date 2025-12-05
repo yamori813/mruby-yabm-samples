@@ -9,6 +9,8 @@
 SCL = 2
 SDA = 11
 
+HOURS = (24 * 3)
+
 begin
 
 # ip address setting
@@ -66,9 +68,13 @@ loop do
     av = sum / count
     lastdat = '{"time":"' + mstr + dstr + hstr + '","temp":' + (av / 10).to_s + '.' + (av % 10).to_s + '}'
     if json.length == 0
-      json = lastdat
+      json << lastdat
+    elsif json.count('{') > HOURS
+      pos = json.index("}")
+      json.slice!(0..pos+1)
+      json << ',' + lastdat
     else
-      json = json + ',' + lastdat
+      json << ',' + lastdat
     end
     body = '[' + json + ']'
     res = http_hdr1 + body.length.to_s + http_hdr2 + body
