@@ -33,23 +33,24 @@ loop do
   val = yabm.httpsvrgetreq
   if val
     req = val.lines[0].split(' ')
-    ppos = req[1].index('?')
-    if ppos
-      if req[1].slice(0..ppos-1) == "/ctrl"
-        len = req[1].length
-        que = req[1][ppos+1..len]
-        params = {}
-        para = que.to_s.split('&')
-        para.each do |p|
-          a = p.split('=')
-          params[a[0]] = a[1]
-        end
-        if params["led"] && params["led"] == "off"
-          ledoff yabm
-          yabm.print "ledoff\r\n"
-        elsif params["led"] && params["led"] == "on"
-          ledon yabm
-          yabm.print "ledon\r\n"
+    if req[0] == "GET"
+      ppos = req[1].index('?')
+      if ppos
+        if req[1].slice(0..ppos-1) == "/ctrl"
+          que = req[1].slice(ppos+1..-1)
+          params = {}
+          para = que.split('&')
+          para.each do |p|
+            a = p.split('=')
+            params[a[0]] = a[1]
+          end
+          if params["led"] && params["led"] == "off"
+            ledoff yabm
+            yabm.print "ledoff\r\n"
+          elsif params["led"] && params["led"] == "on"
+            ledon yabm
+            yabm.print "ledon\r\n"
+          end
         end
       end
     end 
