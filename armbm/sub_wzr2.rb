@@ -1,9 +1,9 @@
-# WCA-G GPIO
+# WZR2-G300N GPIO
 
-# LED1 is direct connect to VCC
-D44 = (1 << 4)
-D40 = (1 << 5)
-D45 = (1 << 0)
+# D39(POWER) is direct connect to VCC
+D44 = (1 << 4)		# SECURITY
+D40 = (1 << 5)		# ROUTER
+D45 = (1 << 0)		# DIAG
 
 def gpioinit(yabm)
   leds = D44 | D40 | D45
