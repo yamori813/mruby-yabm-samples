@@ -44,12 +44,14 @@ loop do
             a = p.split('=')
             params[a[0]] = a[1]
           end
-          if params["led"] && params["led"] == "off"
-            ledoff yabm
-            yabm.print "ledoff\r\n"
-          elsif params["led"] && params["led"] == "on"
-            ledon yabm
-            yabm.print "ledon\r\n"
+          if params.has_key?("led")
+            if params["led"] == "off"
+              ledoff yabm
+              yabm.print "ledoff\r\n"
+            elsif params["led"] == "on"
+              ledon yabm
+              yabm.print "ledon\r\n"
+            end
           end
         end
       end
