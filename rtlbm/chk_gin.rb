@@ -16,12 +16,30 @@ begin
   reg = 0
   yabm.gpiosetdir(reg)
 
-  yabm.print "GPIO input check\n"
+  yabm.print "GPIO input check\r\n"
 
+  last = 0
+
+  last = yabm.gpiogetdat
   loop do
     val = yabm.gpiogetdat
-    yabm.print "#{val}\n"
-    yabm.msleep(2_000)
+    if last != val
+      bit = if last < val
+              1
+            else
+              0
+            end
+      a = (val - last).abs
+      yabm.print "#{a.to_s(16)}:"
+      p = -1
+      while a != 0
+        a >>= 1
+        p += 1
+      end
+      yabm.print "#{p}:#{bit}"
+      yabm.print "\r\n"
+    end
+    last = val
   end
 rescue StandardError => e
   yabm.print e.to_s
