@@ -33,6 +33,9 @@ TOP_BUTTON = (1 << 3)
 ALLLEDS = (STATUS_LED1 | STATUS_LED2 | STATUS_LED3 |
   TOP_LED1 | TOP_LED2 | TOP_LED3)
 
+SCL = 2
+SDA = 11
+
 def gpioinit(yabm) 
   yabm.gpiosetsel(0x003c300c, 0x003c300c, 0x00001800, 0x00001800)
 

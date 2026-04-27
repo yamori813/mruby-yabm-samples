@@ -1,22 +1,17 @@
 #
 # mruby on YABM script
 #
-# Weather Station used by BMP180 and Si7021 on HomeSpotCube
-# need sub_hsc.rb i2c/bmp180_c.rb i2c/si7021_c.rb
+# Weather Station used by BMP180 
+# need sub_*.rb i2c/bmp180_c.rb
 #
 
 APIKEY = 'naisyo'
 
-# NONET = false
-# for debug
-NONET = true
-
-MAXFAILE = 10
-
-# GPIO I2C Pin (SW12)
-
-SCL = 2
-SDA = 11
+if APIKEY == 'naisyo'
+  NONET = true
+else
+  NONET = false
+end
 
 def pointstr(p, c)
   if p == 0
@@ -52,108 +47,45 @@ begin
 
   yabm.i2cinit(SCL, SDA, 1)
 
-  lastbt = 0
-  lastbp = 0
-  lastst = 0
-  lastsh = 0
-
-  # Si7021 Firmware Revision
-  si = SI7021.new(yabm)
-  rev = si.getRevition
-  ser = si.getSerialStr
-  yabm.print "Si SN: #{ser} REV: #{rev}\r\n"
-
   # 0 ultra low power, 1 standard, 2 high resolution, 3 ultra high resolution
   bmp = BMP180.new(yabm, 3)
   id = bmp.getChipid
   yabm.print "BMP180 ID: #{id}\r\n"
 
-  # indecate start by led
-  reg = yabm.gpiogetdat
-  reg &= ~STATUS_LED2
-  yabm.gpiosetdat(reg)
-
   count = 0
-  neterr = 0
 
   yabm.watchdogstart(256)
 
   loop do
-    reg = yabm.gpiogetdat
-    reg &= ~TOP_LED3
-    yabm.gpiosetdat(reg)
-
-    error = 0
 
     yabm.print "#{count} "
+
+    ledon yabm
 
     # BMP180
 
     bt = bmp.readTemperature
-    if count == 0 || (lastbt - bt).abs < 10
-      btstr = pointstr(bt, 1)
-      lastbt = bt
-    else
-      btstr = pointstr(lastbt, 1)
-      error |= (1 << 0)
-    end
+    btstr = pointstr(bt, 1)
     yabm.print "BMPT: #{btstr} "
 
     bp = bmp.readPressure
-    if count == 0 || (lastbp - bp).abs < 100
-      bpstr = pointstr(bp, 2)
-      lastbp = bp
-    else
-      bpstr = pointstr(lastbp, 2)
-      error |= (1 << 1)
-    end
-    yabm.print "P: #{bpstr} #{error} "
+    bpstr = pointstr(bp, 2)
 
-    # Si7021
+    yabm.print "P: #{bpstr} "
 
-    sh = si.getHumidityPercent
-    if count == 0 || (lastsh - sh).abs < 20
-      shstr = sh.to_s
-      lastsh = sh
-    else
-      shstr = lastsh.to_s
-      error |= (1 << 3)
-    end
+    para = 'api_key=' + APIKEY + '&field1=' + count.to_s + '&field2=' + btstr + '&field3=' + bpstr
 
-    st = si.getCelsiusHundredths
-    if count == 0 || (lastst - st).abs < 100
-      ststr = pointstr(st, 2)
-      lastst = st
-    else
-      ststr = pointstr(lastst, 2)
-      error |= (1 << 2)
-    end
-    yabm.print "SIT: #{ststr} RH: #{shstr} #{error}"
-
-    para = 'api_key=' + APIKEY + '&field1=' + count.to_s + '&field2=' + btstr + '&field3=' + bpstr + '&field4=' + ststr + '&field5=' + shstr + '&field6=' + error.to_s
     if !NONET
       res = SimpleHttp.new('https', 'api.thingspeak.com', 443).request('GET', '/update?' + para,
                                                                        { 'User-Agent' => 'test-agent' })
       if !res.nil? && res.status.to_s.length != 0
         yabm.print " #{res.status}"
-        neterr = 0
-      else
-        neterr += 1
-        raise '' if neterr == MAXFAILE
       end
     end
     yabm.print "\r\n"
     count += 1
 
-    reg = yabm.gpiogetdat
-    reg |= TOP_LED3
-    yabm.gpiosetdat(reg)
-
-    if count == 500
-      reg = yabm.gpiogetdat
-      reg |= STATUS_LED2
-      yabm.gpiosetdat(reg)
-    end
+    ledoff yabm
 
     yabm.watchdogreset
 

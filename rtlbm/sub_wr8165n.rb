@@ -14,10 +14,13 @@ RLED = 0x2000
 SSW = 0x0004
 PSW = 0x0020
 
+SCL = 10
+SDA = 11
+
 def gpioinit(yabm) 
 
 # JTAG(GPIOA2,4,5,6) and LED_PORT3(GPIOB5) is GPIO
-  yabm.gpiosetsel(0x06, 0x1ffffff, 0x600, 0x3fff)
+  yabm.gpiosetsel(0x06, 0x1ffffff, 0x36db, 0x3fff)
 
   yabm.gpiosetctl(~(GLED | RLED | SSW | PSW))
   yabm.gpiosetdir(GLED | RLED)
@@ -35,5 +38,3 @@ def ledoff yabm
   reg = yabm.gpiogetdat()
   yabm.gpiosetdat(reg & ~RLED)
 end
-
-def gpioinit(yabm) 
