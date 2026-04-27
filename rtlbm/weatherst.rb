@@ -2,7 +2,8 @@
 # mruby on YABM script
 #
 # Weather Station used by BMP180 
-# need sub_*.rb i2c/bmp180_c.rb
+# need compile with subroutine file
+# need i2c/bmp180_c.rb
 #
 
 APIKEY = 'naisyo'

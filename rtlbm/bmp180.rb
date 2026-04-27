@@ -5,11 +5,6 @@
 # use i2c/bmp180_c.rb
 #
 
-# GPIO I2C Pin (SW12)
-
-SCL = 2
-SDA = 11
-
 def pointstr(p, c)
   if p == 0
     '0.' + ('0' * c)
@@ -34,9 +29,7 @@ begin
 
   loop do
 
-    reg = yabm.gpiogetdat()
-    reg = reg & ~TOP_LED3
-    yabm.gpiosetdat(reg)
+    ledon yabm
 
     t = b.readTemperature
     tstr = pointstr(t, 1)
@@ -45,6 +38,8 @@ begin
     p = b.readPressure
     pstr = pointstr(p, 2)
     yabm.print pstr + "\r\n "
+
+    ledoff yabm
 
     yabm.msleep(10_000)
 

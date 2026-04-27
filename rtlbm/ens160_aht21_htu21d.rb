@@ -5,11 +5,6 @@
 # need sub_hsc.rb i2c/ens160_c.rb i2c/aht21_c.rb i2c/htu21d_c.rb
 #
 
-# GPIO I2C Pin (SW12)
-
-SCL = 2
-SDA = 11
-
 def pointstr(p, c)
   if p == 0
     '0.' + ('0' * c)

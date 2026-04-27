@@ -5,11 +5,6 @@
 # need sub_hsc.rb
 #
 
-# GPIO I2C Pin (SW12)
-
-SCL = 2
-SDA = 11
-
 def s16(v)
   if v > 0x8000 then
     v - 0x10000

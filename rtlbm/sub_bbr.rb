@@ -4,8 +4,10 @@
 
 # i2c pin
 
-I2CSCK = 3
-I2CSDA = 5
+# TRST# (1) has internal pull-up resistor
+SCL = 3
+# TDI (3) has internal pull-up resistor
+SDA = 5
 
 RLED = (1 << 16)
 

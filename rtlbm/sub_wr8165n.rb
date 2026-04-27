@@ -8,11 +8,17 @@
 # GPIOA2 Slide SW  0x0004
 # GPIOA5 Push SW   0x0020
 # GPIOA4 ?         0x0010
+# GPIOB2 D20       0x0400
+# GPIOB3 D22       0x0800
+# GPIOB4 D21       0x1000
+# GPIOB6 D23       0x4000
 
 GLED = 0x0040
 RLED = 0x2000
 SSW = 0x0004
 PSW = 0x0020
+
+# Use GPIOB2 and GPIOB3
 
 SCL = 10
 SDA = 11

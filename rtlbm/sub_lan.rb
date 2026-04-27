@@ -4,8 +4,8 @@
 
 # i2c pin
 
-I2CSCK = 3
-I2CSDA = 5
+SCL = 3
+SDA = 5
 
 RLED = (1 << 4)
 
