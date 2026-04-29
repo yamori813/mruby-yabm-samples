@@ -27,9 +27,12 @@ end
 
 def dispfib(yabm)
   yabm.print ASCIIMODE, 1
+  start = yabm.count
   yabm.print 'fib(30)', 1
   yabm.print LF, 1
   yabm.print fib(30).to_s, 1
+  time = (((yabm.count - start) / 100) + 5) / 10
+  yabm.print " #{time}sec", 1
 end
 
 def disptitle(yabm)
