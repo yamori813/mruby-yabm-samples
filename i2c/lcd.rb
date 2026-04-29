@@ -10,7 +10,7 @@
 LCDADDR = 0x3e
 
 class I2CLCD
-  def initialize yabm
+  def initialize(yabm)
     @y = yabm
     @y.i2cwrite(LCDADDR, [0x38, 0x39, 0x14, 0x70, 0x56, 0x6c])
     @y.msleep(200)
@@ -28,10 +28,10 @@ class I2CLCD
     @y.msleep(100)
   end
 
-  def print str
+  def print(str)
     lcdcmd = [0x40]
-    arr = str.split("")
-    for ch in arr do
+    arr = str.chars
+    arr.each do |ch|
       lcdcmd.push(ch.ord)
     end
     @y.print lcdcmd.to_s
@@ -40,47 +40,43 @@ class I2CLCD
 end
 
 begin
+  yabm = YABM.new
 
-yabm = YABM.new
+  gpioinit(yabm)
 
-gpioinit(yabm)
+  yabm.i2cinit(SCL, SDA, 1)
 
-yabm.i2cinit(SCL, SDA, 1)
+  lcd = I2CLCD.new yabm
 
-lcd = I2CLCD.new yabm
+  lcd.clear
 
-lcd.clear
+  str1 = 'mruby on'
+  str2 = 'YABM'
 
-str1 = "mruby on"
-str2 = "YABM"
+  i = 0
+  loop do
+    yabm.print '.'
+    yabm.msleep(500)
+    if i < str1.length
+      lcd.print str1[i]
+    else
+      lcd.print str2[i - 8]
+    end
+    i += 1
+    lcd.next if i == str1.length
+    next unless i == str1.length + str2.length
 
-i = 0
-loop do
-  yabm.print "."
-  yabm.msleep(500)
-  if i < str1.length
-    lcd.print str1[i]
-  else
-    lcd.print str2[i-8]
-  end
-  i += 1
-  if i == str1.length
-    lcd.next
-  end
-  if i == str1.length + str2.length
     yabm.msleep(1_000)
-    5.times {
+    5.times do
       ledon yabm
       yabm.msleep(200)
       ledoff yabm
       yabm.msleep(200)
-    }
+    end
     yabm.msleep(3_000)
     lcd.clear
     i = 0
   end
-end
-
-rescue => e
+rescue StandardError => e
   yabm.print e.to_s
 end
