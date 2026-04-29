@@ -1,13 +1,9 @@
 #
-# rtlbm-mruby mruby script
+# mruby on YABM script
 #
-# This is demonstration of I2C LCD on BBR
+# This is demonstration of I2C LCD
+# need compile with subroutine file
 #
-
-# i2c pin
-
-I2CSCK = 3
-I2CSDA = 5
 
 # i2c lcd address
 
@@ -47,13 +43,9 @@ begin
 
 yabm = YABM.new
 
-# use gpio pin
-yabm.gpiosetsel(0x300000, 0x300000, 0, 0)
+gpioinit(yabm)
 
-gpio = yabm.gpiogetdat
-yabm.gpiosetdat(gpio | (1 << 16) | 0x7c00)
-
-yabm.i2cinit(I2CSCK, I2CSDA, 1)
+yabm.i2cinit(SCL, SDA, 1)
 
 lcd = I2CLCD.new yabm
 
@@ -78,9 +70,9 @@ loop do
   if i == str1.length + str2.length
     yabm.msleep(1_000)
     5.times {
-      yabm.gpiosetdat(gpio & ~(1 << 16))
+      ledon yabm
       yabm.msleep(200)
-      yabm.gpiosetdat(gpio | (1 << 16))
+      ledoff yabm
       yabm.msleep(200)
     }
     yabm.msleep(3_000)
