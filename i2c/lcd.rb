@@ -5,11 +5,10 @@
 # need compile with subroutine file
 #
 
-# i2c lcd address
-
-LCDADDR = 0x3e
-
 class I2CLCD
+  # i2c lcd address
+  LCDADDR = 0x3e
+
   def initialize(yabm)
     @y = yabm
     @y.i2cwrite(LCDADDR, [0x38, 0x39, 0x14, 0x70, 0x56, 0x6c])
