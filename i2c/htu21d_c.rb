@@ -74,4 +74,10 @@ class HTU21D
     @y.print "crc error #{arr[2]},#{crc} " if crc != arr[2]
     ((tempcode * 17_572) / 65_536) - 4685
   end
+
+  def getHumidityPercent
+    arr = @y.i2cread(HTU21ADDR, 3, HTU21_READ_HUMIDITY_W_HOLD_COMMAND)
+    rhcode = (arr[0] << 8) | arr[1]
+    (125 * rhcode) / 65_536 - 6
+  end
 end
