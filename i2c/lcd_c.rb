@@ -31,7 +31,7 @@ class I2CLCD
     arr.each do |ch|
       lcdcmd.push(ch.ord)
     end
-    @y.print lcdcmd.to_s
+#    @y.print lcdcmd.to_s
     @y.i2cwrite(LCDADDR, lcdcmd)
   end
 end
