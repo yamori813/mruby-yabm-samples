@@ -20,6 +20,11 @@ class I2CLCD
     @y.msleep(100)
   end
 
+  def home
+    @y.i2cwrite(LCDADDR, [0x00, 0x02])
+    @y.msleep(100)
+  end
+
   def next
     @y.i2cwrite(LCDADDR, [0x00, 0xc0])
     @y.msleep(100)
