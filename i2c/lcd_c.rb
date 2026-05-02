@@ -11,7 +11,7 @@ class I2CLCD
     @y = yabm
     @y.i2cwrite(LCDADDR, [0x38, 0x39, 0x14, 0x70, 0x56, 0x6c])
     @y.msleep(200)
-    @y.i2cwrite(LCDADDR, [0x38, 0x0d, 0x01])
+    @y.i2cwrite(LCDADDR, [0x38, 0x0c, 0x01])
     @y.msleep(10)
   end
 
