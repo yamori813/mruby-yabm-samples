@@ -47,8 +47,9 @@ begin
     yabm.print "#{str},"
     i = 0
     lcd.print ' ' # ???
-    while i < str.length
-      lcd.print str[i]
+    rstr = str.rjust(8, ' ')
+    while i < rstr.length
+      lcd.print rstr[i]
       i += 1
     end
     rh = h.getHumidityPercent
@@ -59,8 +60,9 @@ begin
     lcd.next
     yabm.msleep 5
     i = 0
-    while i < str.length
-      lcd.print str[i]
+    rstr = str.rjust(8, ' ')
+    while i < rstr.length
+      lcd.print rstr[i]
       i += 1
     end
     ledoff yabm
