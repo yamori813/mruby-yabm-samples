@@ -2,7 +2,7 @@
 # mruby on YABM script
 #
 # This is demonstration of I2C LCD
-# need compile with subroutine file
+# need compile with module subroutine file
 #
 
 begin
