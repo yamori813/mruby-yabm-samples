@@ -35,6 +35,8 @@ begin
 
   h.reset
 
+  lcd.setcgram
+
   #  lcd.print "SN: #{h.htu21_read_serial_number}"
   #  yabm.msleep 5_000
 
@@ -66,7 +68,15 @@ begin
       i += 1
     end
     ledoff yabm
-    yabm.msleep 10_000
+    for num in 0..4 do
+      lcd.home
+      yabm.msleep 5
+      lcd.next
+      yabm.msleep 5
+      lcd.bou num
+      yabm.msleep 4_000
+    end
+
   end
 rescue StandardError => e
   yabm.print e.to_s
