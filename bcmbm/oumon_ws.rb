@@ -2,12 +2,7 @@
 # bcmbm-mruby mruby script
 #
 # Weather Station used by MPL115A2, SHT30, BH1750 on WCA-G
-# use i2c/bh1750_c.rb i2c/mpl115_c.rb i2c/sht3x_c.rb 
-
-# GPIO I2C Pin used SW3
-
-SCL = 5
-SDA = 3
+# use i2c/bh1750_c.rb i2c/mpl115_c.rb i2c/sht3x_c.rb i2c/sub_whr_g.rb
 
 LED10 = (1 << 6) # green
 LED2 = (1 << 2)
@@ -50,7 +45,7 @@ oumon = "10.10.10.18"
 
 yabm.netstart(addr, mask, gw, dns)
 
-yabm.i2cinit(SCL, SDA, 1)
+yabm.i2cinit(SCL, SDA, 2)
 
 sht = SHT3x.new yabm
 
