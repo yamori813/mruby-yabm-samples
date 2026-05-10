@@ -72,7 +72,7 @@ eco2sum = 0
 
 SimpleHttp.new("http", oumon, 80).request("GET", "/cgi/reboot.cgi", {'User-Agent' => "test-agent"})
 
-yabm.watchdogstart(300)
+yabm.watchdogstart(100)
 
 loop do
 
