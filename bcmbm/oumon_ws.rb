@@ -45,16 +45,22 @@ oumon = "10.10.10.18"
 
 yabm.netstart(addr, mask, gw, dns)
 
+yabm.print "1"
 yabm.i2cinit(SCL, SDA, 2)
 
+yabm.print "2"
 sht = SHT3x.new yabm
 
+yabm.print "3"
 mpl = MPL115.new yabm
 
+yabm.print "4"
 bh = BH1750.new yabm
 
+yabm.print "5"
 aht = AHT21.new yabm
 
+yabm.print "6"
 ens = ENS160.new yabm
 
 bh.setMTreg(254)
@@ -71,8 +77,9 @@ tvocsum = 0
 eco2sum = 0
 
 SimpleHttp.new("http", oumon, 80).request("GET", "/cgi/reboot.cgi", {'User-Agent' => "test-agent"})
+yabm.print "x"
 
-yabm.watchdogstart(25)
+yabm.watchdogstart(80)
 
 loop do
 
