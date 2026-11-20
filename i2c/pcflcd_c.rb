@@ -52,17 +52,17 @@ class I2CPCFLCD
   end
 
   def clear
-    datwrite(0x01)
+    cmdwrite(0x01)
     @y.msleep(100)
   end
 
   def home
-    datwrite(0x02)
+    cmdwrite(0x02)
     @y.msleep(100)
   end
 
   def next
-    datwrite(0xc0)
+    cmdtwrite(0xc0)
     @y.msleep(100)
   end
 
