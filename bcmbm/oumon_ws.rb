@@ -1,8 +1,8 @@
 #
 # bcmbm-mruby mruby script
 #
-# Weather Station used by MPL115A2, SHT30, BH1750 on WCA-G
-# use i2c/bh1750_c.rb i2c/mpl115_c.rb i2c/sht3x_c.rb i2c/sub_whr_g.rb
+# Weather Station used by MPL115A2, SHT30, BH1750, ENS160 on WCA-G
+# use i2c/bh1750_c.rb i2c/mpl115_c.rb i2c/sht3x_c.rb i2c/ens160_c.rb i2c/sub_whr_g.rb
 
 LED10 = (1 << 6) # green
 LED2 = (1 << 2)
