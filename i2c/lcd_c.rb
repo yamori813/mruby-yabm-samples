@@ -35,7 +35,7 @@ class I2CLCD
     @y.i2cwrite(LCDADDR, [0x00, 0x38])
     @y.i2cwrite(LCDADDR, [0x00, 0x40])
     @y.msleep(100)
-    for j in 0..3 do
+    (0..3).each do |j|
       (7 - bar[j]).times do
         @y.i2cwrite(LCDADDR, [0x40, 0x00])
         @y.msleep(100)
@@ -49,7 +49,7 @@ class I2CLCD
   end
 
   def bou(num)
-    if num == 0 then
+    if num == 0
       @y.i2cwrite(LCDADDR, [0x40, 0x20])
     else
       @y.i2cwrite(LCDADDR, [0x40, 0x00 + num - 1])
@@ -62,7 +62,7 @@ class I2CLCD
     arr.each do |ch|
       lcdcmd.push(ch.ord)
     end
-#    @y.print lcdcmd.to_s
+    # @y.print lcdcmd.to_s
     @y.i2cwrite(LCDADDR, lcdcmd)
   end
 end

@@ -11,7 +11,7 @@ class I2CPCFLCD
     h = [(c & 0xf0) | 0x08] * 3
     h[1] |= 0x04
     @y.i2cwrite(LCDADDR, h)
-    l = [((c << 4) & 0xf0)| 0x08] * 3
+    l = [((c << 4) & 0xf0) | 0x08] * 3
     l[1] |= 0x04
     @y.i2cwrite(LCDADDR, l)
   end
@@ -20,7 +20,7 @@ class I2CPCFLCD
     h = [(c & 0xf0) | 0x09] * 3
     h[1] |= 0x04
     @y.i2cwrite(LCDADDR, h)
-    l = [((c << 4) & 0xf0)| 0x09] * 3
+    l = [((c << 4) & 0xf0) | 0x09] * 3
     l[1] |= 0x04
     @y.i2cwrite(LCDADDR, l)
   end
